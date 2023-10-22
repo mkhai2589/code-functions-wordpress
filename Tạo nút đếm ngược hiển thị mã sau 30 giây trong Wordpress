@@ -1,3 +1,5 @@
+//shortcode để hiển thị phần chữ text nội dung đó là: [noidung text="noi dung muon hien thi"]
+
 function custom_content_shortcode($atts, $content) {
 $atts = shortcode_atts(array(
 'text' => '',
