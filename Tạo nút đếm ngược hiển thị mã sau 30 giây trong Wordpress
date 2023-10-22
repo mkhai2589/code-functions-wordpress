@@ -1,0 +1,57 @@
+function custom_content_shortcode($atts, $content) {
+$atts = shortcode_atts(array(
+'text' => '',
+), $atts);
+
+$output = '<style>
+#start-countdown {
+background-color: #0073e6;
+color: #fff;
+border: none;
+padding: 10px 20px;
+cursor: pointer;
+}
+#start-countdown:disabled {
+background-color: #ccc;
+cursor: not-allowed;
+}
+</style>';
+
+$output .= '<div id="countdown-container">';
+$output .= '<button id="start-countdown">Hiển thị mã</button>';
+$output .= '<div id="additional-content" style="display:none;"></div>'; // Để trống vì nội dung sẽ được thêm thông qua JavaScript
+$output .= '</div>';
+
+$output .= '<script>
+jQuery(function($) {
+$("#start-countdown").click(function() {
+var $countdownButton = $(this);
+$countdownButton.prop("disabled", true);
+var countdown = 30;
+
+var countdownInterval = setInterval(function() {
+if (countdown <= 0) {
+clearInterval(countdownInterval);
+$countdownButton.hide();
+// Hiển thị nội dung sau 30 giây
+var base64Content = "' . base64_encode(esc_html($atts['text'])) . '";
+$("#additional-content").text(atob(base64Content)).show();
+} else {
+$countdownButton.text("Vui lòng đợi: " + countdown + " giây");
+countdown--;
+}
+}, 1000);
+});
+});
+</script>';
+
+return $output;
+}
+
+function load_jquery() {
+if (!is_admin()) {
+wp_enqueue_script('jquery');
+}
+}
+add_action('wp_enqueue_scripts', 'load_jquery');
+add_shortcode('noidung', 'custom_content_shortcode');
